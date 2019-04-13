@@ -1,8 +1,8 @@
-if (!require(SingleCellExperiment)) { # for normalization
+if (!require(SingleCellExperiment)) { 
   if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-  BiocManager::install("SingleCellExperiment", version = "3.8")
-  library(Linnorm)
+  BiocManager::install("SingleCellExperiment")
+  library(SingleCellExperiment)
 }
 
 if (!require(Linnorm)) { # for normalization
@@ -56,6 +56,7 @@ get_sc_data <- function(data_id){
   if( data_id == 1){
     SCEset <- readRDS("Single Cell Data/patel.rds")
     m <- data.frame(assays(SCEset)[[1]])
+    rownames(m)=rowData(SCEset)$feature_symbol
     ann <- colData(SCEset)$cell_type1
     normed <- T
   }
@@ -63,6 +64,7 @@ get_sc_data <- function(data_id){
   if(data_id==2){
     SCEset <- readRDS("Single Cell Data/yan.rds")
     m <- assays(SCEset)[[1]]
+    rownames(m)=rowData(SCEset)$feature_symbol
     ann <- colData(SCEset)$cell_type1
     normed <- F
   }
@@ -70,6 +72,7 @@ get_sc_data <- function(data_id){
   if(data_id==3){
     SCEset <- readRDS("Single Cell Data/goolam.rds")
     m <- data.frame(assays(SCEset)[[1]])
+    rownames(m)=rowData(SCEset)$feature_symbol
     ann <- colData(SCEset)$cell_type1
     normed <- F
   }
@@ -77,6 +80,7 @@ get_sc_data <- function(data_id){
   if(data_id==4){
     SCEset <- readRDS("Single Cell Data/biase.rds")
     m <- data.frame(assays(SCEset)[[1]][,-(50:56)])
+    rownames(m)=rowData(SCEset)$feature_symbol
     ann <- colData(SCEset)$cell_type1[-(50:56)]
     normed <- F
   }
@@ -84,6 +88,7 @@ get_sc_data <- function(data_id){
   if(data_id==5){
     SCEset <- readRDS("Single Cell Data/treutlein.rds")
     m <- assays(SCEset)[[1]]
+    rownames(m)=rowData(SCEset)$feature_symbol
     ann <- colData(SCEset)$cell_type1
     normed <- F
   }
