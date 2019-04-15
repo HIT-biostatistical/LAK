@@ -1,4 +1,4 @@
-setwd("C:/Users/12441/Desktop/LAK/")
+setwd("~/LAK/")
 source("R Scripts/Creat_Simulate_Data.R")
 if (!require(Linnorm)) { # for normalization
   if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -88,11 +88,11 @@ plot_matrix <- function(exprs_matrix,matrix_LAK,normed){
   return(ggplot_matrix)  
 }
 
-Fig.S5a_plot_matrix <- plot_matrix(data1,data1_LAK,normed = T)
-#Fig.S5b_plot_matrix <- plot_matrix(data2,data2_LAK,normed = T)
-#Fig.S5c_plot_matrix <- plot_matrix(data3,data3_LAK,normed = T)
-#Fig.S5d_plot_matrix <- plot_matrix(data4,data4_LAK,normed = T)
-Fig.S5e_plot_matrix <- plot_matrix(data5,data5_LAK,normed = T)
+Fig.S4a_plot_matrix <- plot_matrix(data1,data1_LAK,normed = T)
+#Fig.S4b_plot_matrix <- plot_matrix(data2,data2_LAK,normed = T)
+#Fig.S4c_plot_matrix <- plot_matrix(data3,data3_LAK,normed = T)
+#Fig.S4d_plot_matrix <- plot_matrix(data4,data4_LAK,normed = T)
+Fig.S4e_plot_matrix <- plot_matrix(data5,data5_LAK,normed = T)
 
 load("RData/Figure3b 3c.RData")
 
