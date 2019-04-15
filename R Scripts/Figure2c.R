@@ -81,7 +81,6 @@ rm(id);rm(exprs_matrix);rm(k);rm(normed_matrix);rm(LAK_ann) #delete variable nam
 #rm(id);rm(exprs_matrix);rm(k);rm(normed_matrix);rm(LAK_ann) #delete variable names
 
 load("RData/T_five_diff_gene_names.RData")
-load("RData/W_five_diff_gene_names.RData")
 
 #look up the number of each type
 #table(Patel_LAK_ann)
