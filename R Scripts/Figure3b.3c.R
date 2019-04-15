@@ -103,11 +103,11 @@ cluster_result_visualize <-function(plot_matrix){
     theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank()) }
 
 #The visualization of the clustering results
-Fig.S5a <- cluster_result_visualize(Fig.S5a_plot_matrix);Fig.S5a
-#Fig.S5b <- cluster_result_visualize(Fig.S5b_plot_matrix);Fig.S5b
-#Fig.S5c <- cluster_result_visualize(Fig.S5c_plot_matrix);Fig.S5c
-#Fig.S5d <- cluster_result_visualize(Fig.Sd_plot_matrix);Fig.S5d
-Fig.S5e <- cluster_result_visualize(Fig.S5e_plot_matrix);Fig.S5e
+Fig.S4a <- cluster_result_visualize(Fig.S5a_plot_matrix);Fig.S4a
+#Fig.S4b <- cluster_result_visualize(Fig.S5b_plot_matrix);Fig.S4b
+#Fig.S4c <- cluster_result_visualize(Fig.S5c_plot_matrix);Fig.S4c
+#Fig.S4d <- cluster_result_visualize(Fig.Sd_plot_matrix);Fig.S4d
+Fig.S4e <- cluster_result_visualize(Fig.S5e_plot_matrix);Fig.S4e
 
-Fig.S5a
-Fig.S5e
+Fig.S4a
+Fig.S4e
