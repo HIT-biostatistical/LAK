@@ -8,7 +8,6 @@ Zeisel<-read.table("Single Cell Data/Zeisel.txt", header = T)
 gene_names<-as.vector(Zeisel$cell_id)
 Zeisel <- as.matrix(Zeisel[,-1])
 
-#Zeisel_LAK <- LAK(Zeisel, 9)
 load("RData/Zeisel_LAK.RData")
 
 gene_names <- gene_names[which(rowSums(Zeisel>0.5)>2)]
@@ -28,11 +27,11 @@ Zeisel_marker<-c('Aif1','Aldoc','Acta2','Cldn5','Thy1','Spink8','Mbp','Gad1','Tb
 
 
 #t-test
-T_matrix<- function(df,df_label){     #label ???1开始的整数 
+T_matrix<- function(df,df_label){      
   out<-data.frame(row.names = rownames(df))
   for( i in min(df_label):max(df_label) ){
     for( j in 1:dim(df)[1]){
-      a<-as.vector(t(df[j,df_label==i])) #cluster i 的第j 个基因表达量
+      a<-as.vector(t(df[j,df_label==i])) 
       b<-as.vector(t(df[j,df_label!=i]))
       if(sd(a)==0 && sd(b)==0){
       }else{
@@ -46,8 +45,7 @@ T_matrix<- function(df,df_label){     #label ???1开始的整数
   return(out)
 } #t test to get differential expressed genes
 
-#提取以上p值矩阵对应的基因名，k=提取 cluster k的差异表达基???
-d_expr<-function(out_matrix,k=1,p=0.01,gene_names){   # k为输出第K类的差异表达，p是输出小于P的P???
+d_expr<-function(out_matrix,k=1,p=0.01,gene_names){   
   pvalue<-out_matrix[,k]
   times<-0
   gene_list<-c()
@@ -87,11 +85,12 @@ for(i in c(1,3:ncol(M))){
   cat(i,'\t',rownames(cur)[1:5])
   cat('\n')
   dgene <- c(dgene, rownames(cur)[1:5])
-  #pgene <- c(pgene,names(cur_max[order(cur_max,decreasing = T)])[1:50])
-  #cur<-cur[other_median<0.5 & other_mean<0.5 &cur_median>1 &cur_median>1 & cur_mean > 1,]
   pgene<-c(pgene, rownames(cur[order(rowMeans(cur),decreasing = T),])[1:5])
 }
 
+for (i in 36:39){
+  pgene[i]<-pgene[i+1]
+}
 
 pgene[10]<- "Tbr1"
 pgene[15]<- "Thy1"
@@ -99,6 +98,7 @@ pgene[20]<- "Spink8"
 pgene[30]<- "Cldn5"
 pgene[35] <- "Aldoc"
 pgene[40] <- "Aif1"
+pgene[32] <- "Aqp4"
 
 
 ht_df <- Zeisel_with_LAK_genes_normed[pgene,Zeisel_LAK_ann!=2]
@@ -128,10 +128,10 @@ ann_colors=list(Cluster = c("1"="#00FFFF","3"="#33FF33",
                             "7"="#FF0000","8"="#999999","9"="#0000FF"))
 
 p <- pheatmap(ht_df,cluster_rows = FALSE,cluster_cols=FALSE,
-         annotation_col = annotation_col, 
-         annotation_colors = ann_colors,
-         gaps_row = seq(8)*5,
-         gaps_col = gapscol,
-         fontsize = 8,
-         show_colnames =F)
-
+              annotation_col = annotation_col, 
+              annotation_colors = ann_colors,
+              show_rownames = F,
+              gaps_row = seq(8)*5,
+              gaps_col = gapscol,
+              fontsize = 8,
+              show_colnames =F)
