@@ -51,12 +51,12 @@ for(k in 1:100){
   cat(ARI,'\n')
   ARIS <- c(ARIS, ARI)
 }
+load("RData/match_human_5_tissue_ARI_results.RData")
 
 #Output the LAK_ann and after_reduce_dim result under ARI=0.940, 0.827, 0.706 
 #LAK_ann <- LAK(ES, num_cluster = 5 ,normed = T)
 #ari <-adjustedRandIndex(LAK_ann[[1]]$Cs, cell_types)
 #after_reduce_dim <- Rtsne(t(ES))
-
 load("RData/Figure_S4.RData")
 
 #plot visualization of cluster result under ARI = 0.940
