@@ -4,13 +4,9 @@ library("cowplot")
 library(splatter)
 setwd("C:/Users/12441/Desktop/LAK CODE/")
 source("LAK.R")
-load("Figure2a_1.RData")
+load("Figure2a.RData")
 
 
-
-camp1 <- get_sc_data(6)[[1]]
-camp1_ann <- get_sc_data(6)[[3]]
-camp1_k <- k_detection(camp1, method = "hclust", max_K = 10 , B = 100)
 
 #save(ARIS_result,ari.linnorm.biase,ari.pcaReduce.biase,ari.sc3.biase,ari.sincera.biase,
 #     ari.linnorm.treu,ari.pcaReduce.treu,ari.sc3.treu,ari.sincera.treu,
