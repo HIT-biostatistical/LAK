@@ -44,6 +44,11 @@ if (!require(MASS)) {
   install.packages("MASS")
   library(MASS)
 }
+if (!require(mclust)) {
+  install.packages("mclus")
+  library(mclus)
+}
+
 
 #data preprocessing 
 #' @param data_id (integer) refers to the id of single cell data
@@ -87,6 +92,30 @@ get_sc_data <- function(data_id){
   
   if(data_id==5){
     SCEset <- readRDS("Single Cell Data/treutlein.rds")
+    m <- assays(SCEset)[[1]]
+    rownames(m)=rowData(SCEset)$feature_symbol
+    ann <- colData(SCEset)$cell_type1
+    normed <- F
+  }
+  
+  if(data_id==6){
+    SCEset <- readRDS("Single Cell Data/camp1.rds")
+    m <- assays(SCEset)[[1]]
+    rownames(m)=rowData(SCEset)$feature_symbol
+    ann <- colData(SCEset)$cell_type1
+    normed <- F
+  }
+  
+  if(data_id==7){
+    SCEset <- readRDS("Single Cell Data/li.rds")
+    m <- assays(SCEset)[[1]]
+    rownames(m)=rowData(SCEset)$feature_symbol
+    ann <- colData(SCEset)$cell_type1
+    normed <- F
+  }
+  
+  if(data_id==8){
+    SCEset <- readRDS("Single Cell Data/zeisel.rds")
     m <- assays(SCEset)[[1]]
     rownames(m)=rowData(SCEset)$feature_symbol
     ann <- colData(SCEset)$cell_type1
@@ -406,24 +435,24 @@ d_expr <- function(out_matrix,k = 1,p = 0.001,gene_names){
 #' p=1e-3 refers to p-value equal 1e-3(generally as a threshold for hypothesis testing)
 #' test refers to T-test or W-test
 #' @return differential expression gene names
-get_diff_exprs_gene_names <- function(diff_pvalue_matrix,topn = numsDiffGene,p_value = 1e-3,test){
+get_diff_exprs_gene_names <- function(diff_pvalue_matrix,topn = numsDiffGene,p_value = 1e-2,test){
   pgene <- c()
   if(test == T){    #control the data selecting conditions by T-test
-  max_med <- c(-0.4,0.5,0.5,0.5,0.5)
-  max_mea <- c(-0.4,0.5,0.5,0.5,0.5)
-  min_med <- c(3,1.5,1,3,0.5)
+  max_med <- c(-0.4,0.5,0.5,0.5,0.5,1,3)
+  max_mea <- c(-0.4,0.5,0.5,0.5,0.5,1,3)
+  min_med <- c(3,1.5,1,3,0.5,0.5,-0.5,-0.5)
   }
   if(test == F){    #control the data selecting conditions by W-test
-  max_med <- c(-0.4,0.5,0.5,0.5,0.4)
-  max_mea <- c(-0.4,0.5,0.5,0.5,0.5)
-  min_med <- c(3,1.5,1,3,0.5)
+  max_med <- c(-0.4,0.5,0.5,0.5,0.4,1,3)
+  max_mea <- c(-0.4,0.5,0.5,0.5,0.5,1,3)
+  min_med <- c(3,1.5,1,3,0.5,1.5,-0.5,-0.5)
   }
   max_med <- max_med[id]
   max_mea <- max_mea[id]
   min_med <- min_med[id]
   for (i in 1:k){
     df <- normed_matrix
-    igene <- d_expr(diff_pvalue_matrix,i,p_value,gene_names = rownames(exprs_matrix)) #select the genetic names under P<0.01
+    igene <- d_expr(diff_pvalue_matrix,i,gene_names = rownames(exprs_matrix)) #select the genetic names under P<0.01
     df <- df[igene,]
     cur <- df[,LAK_ann == i]  #extrect column of label i
     other <- df[,LAK_ann != i] #other column
@@ -431,7 +460,7 @@ get_diff_exprs_gene_names <- function(diff_pvalue_matrix,topn = numsDiffGene,p_v
     other_mean <- apply(other,1,mean)
     cur_median <- apply(cur,1,median)
     #selecting the differentially expressed genes satisfying these three conditions
-    cur <- cur[other_median < max_med & other_mean < max_mea & cur_median > min_med,] 
+    cur <- cur[other_median < max_med & other_mean < max_mea & cur_median > -0.5,] 
     #integrate the selected differentially expressed genes
     pgene <- c(pgene, rownames(cur[order(rowSums(cur),decreasing = T),])[1:topn])
   }
@@ -469,15 +498,17 @@ diff_gene_names_reorder <- function(exprs_matrix,k,normed_matrix,LAK_ann,test,nu
   diff_gene_pvalue <- W_matrix(normed_matrix, LAK_ann) #W-test
   }
   #selecting the differential expression gene names
-  get_pgene <- get_diff_exprs_gene_names(diff_gene_pvalue,topn = numsDiffGene,p_value =1e-2,test)
+  get_pgene <- get_diff_exprs_gene_names(diff_gene_pvalue,topn = numsDiffGene,p_value =1e-1,test)
   #specify the cluster order
   patelClusterOrder <- c(1,2,3,4,5)
   yanClusterOrder <- c(1,2,3,4,5,6,7)
   goolamClusterOrder <- c(1,2,3,4,5,6)
   biaseClusterOrder <- c(1,2,3)
   TreutleinClusterOrder <- c(1,2,3,4,5,6)
+  Camp1ClusterOrder <- c(1,2,3,4,5,6)
+  LiClusterOrder <- c(1,2,3,4,5,6,7)
   ClusterOrder <- list(patelClusterOrder,yanClusterOrder,goolamClusterOrder,
-                     biaseClusterOrder,TreutleinClusterOrder) #integrate the cluster orders
+                     biaseClusterOrder,TreutleinClusterOrder,Camp1ClusterOrder,LiClusterOrder) #integrate the cluster orders
   reOrderGene <- get_reOrderGene(get_pgene,ClusterOrder[[id]],numsDiffGene=numsDiffGene)
   return(reOrderGene)
 }
@@ -510,8 +541,10 @@ plot_heatmap <- function(diff_expr_genenames,id,k,normed_matrix,LAK_ann,numsDiff
   goolam_gaps_col <- c(46,62,74,90,100)
   biase_gaps_col <- c(9,29)
   treutlein_gaps_col <- c(41,54,58,62,70)
+  camp1_gaps_col <- c(240,360,516,596,670)
+  li_gaps_col <- c(74,104,225,275,326,491)
   gapscol <- list(patel_gaps_col,yan_gaps_col,goolam_gaps_col,
-                biase_gaps_col,treutlein_gaps_col) #integrate them in irder to extracting it easily at function pheatmap
+                biase_gaps_col,treutlein_gaps_col,camp1_gaps_col,li_gaps_col) #integrate them in irder to extracting it easily at function pheatmap
   heatmap <- pheatmap(colorder_diff_gene_normed_matrix,cluster_rows = FALSE,cluster_cols = FALSE,annotation_col = annotation_col, 
           annotation_colors = ann_colors,
           gaps_row = seq(1,k-1)*numsDiffGene,
